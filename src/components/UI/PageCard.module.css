@@ -1,0 +1,8 @@
+.pagecard{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.item_container{
+    width: 100%;
+}

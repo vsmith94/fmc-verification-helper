@@ -1,0 +1,13 @@
+.deployarea {
+	display: flex;
+	height: 100%;
+	background-color: black;
+}
+
+.deployarea > div {
+	justify-content: flex-start;
+	width: 100%;
+	/* height: 95%; */
+	margin: 1rem;
+	background-color: aliceblue;
+}
