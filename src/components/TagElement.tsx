@@ -1,5 +1,5 @@
 import React from "react";
-import { Tag } from "../App";
+import { Tag } from "../components/DeployArea";
 
 import classes from "./Tag.module.css";
 
