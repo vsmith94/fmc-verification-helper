@@ -1,7 +1,6 @@
 import React from "react";
 import { Tag } from "../components/DeployArea";
 import { TagElement } from "./TagElement";
-
 import classes from "./Item.module.css";
 
 type Props = {
