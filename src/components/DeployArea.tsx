@@ -3,16 +3,18 @@ import { PageCard } from "./UI/PageCard";
 
 import classes from "./DeployArea.module.css";
 import { Item } from "./Item";
+import { Totals } from "./Totals";
 
-type Props = {
-};
+interface Props {}
 
 interface State {
 	fileContent: string;
+	itemObjects: ItemObject[];
+	totals: Map<string, number>;
 }
 
 export type ItemObject = {
-	id: number;
+	key: number;
 	upc: number;
 	tags: Tag[];
 };
@@ -32,9 +34,10 @@ export enum Tag {
 export class DeployArea extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
-
 		this.state = {
-			fileContent: '',
+			fileContent: "",
+			itemObjects: [],
+			totals: new Map<string, number>(),
 		};
 	}
 
@@ -42,11 +45,33 @@ export class DeployArea extends React.Component<Props, State> {
 		const file = event.dataTransfer?.files[0];
 		file?.text().then((result) => {
 			this.setState({
-				fileContent : result
+				fileContent: result,
+				itemObjects: this.processFile(result),
+			},() =>{ //updateTotals uses itemsObjects so this is called later.
+				this.setState({
+					totals: this.updateTotals()
+				});
 			});
-			this.processFile(result);
 		});
 	};
+
+	updateTotals(): Map<string, number> {
+		const map = new Map<string, number>();
+		Object.keys(Tag).forEach((tag) => {
+			map.set(tag, 0);
+		});
+
+		console.log(this.state.itemObjects);
+		this.state.itemObjects.forEach((item) => {
+			item.tags.forEach((itemTag) => {
+				let currValue = map.get(Tag[itemTag]) || 1; // I don't know why but this is messy, but its the only it stop complaning.
+				map.set(Tag[itemTag], currValue + 1 || 1);
+			});
+		});
+
+		console.log(map);
+		return map;
+	}
 
 	/**
 	 * Process data acquired from the file. Creates an ItemObject based on each line in the string, including initial tags and UPC, and adds it to ItemObject[]
@@ -95,7 +120,7 @@ export class DeployArea extends React.Component<Props, State> {
 				}
 			});
 			itemObjects.push({
-				id: Math.random(),
+				key: Math.random(),
 				upc: Number.parseInt(upc),
 				tags: [...tags],
 			});
@@ -103,7 +128,7 @@ export class DeployArea extends React.Component<Props, State> {
 
 		//Remove last line as its always empty.
 		itemObjects.pop();
-		console.log(itemObjects);
+		
 		return itemObjects;
 	};
 
@@ -124,12 +149,21 @@ export class DeployArea extends React.Component<Props, State> {
 					}}
 				>
 					<PageCard title="Items">
-						<Item upc={123456789} tags={[]}></Item>
-						<Item upc={123456789} tags={[]}></Item>
-						<Item upc={123456789} tags={[]}></Item>
-						<Item upc={123456789} tags={[]}></Item>
+						{this.state.itemObjects.map((itemObject) => {
+							return (
+								<Item
+									key={itemObject.key}
+									upc={itemObject.upc}
+									tags={itemObject.tags}
+								/>
+							);
+						})}
 					</PageCard>
-					<PageCard title="Totals"></PageCard>
+					<PageCard title="Totals">
+						<Totals
+							totals={this.state.totals}
+						></Totals>
+					</PageCard>
 					<PageCard title="Tickets/Signs"></PageCard>
 				</div>
 			</React.Fragment>
