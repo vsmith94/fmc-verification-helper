@@ -10,6 +10,10 @@
     background-color: gray;
 }
 
+.row:nth-child(odd){
+    background-color: bisque;
+}
+
 .row div{
     text-align: center;
 }
