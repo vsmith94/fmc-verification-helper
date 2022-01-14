@@ -5,6 +5,7 @@ import { TagElement } from "./TagElement";
 import classes from "./Item.module.css";
 
 type Props = {
+    key: Number;
 	upc: Number | String;
 	tags: Tag[];
 };
@@ -30,7 +31,7 @@ export class Item extends React.Component<Props, State> {
 				<div className={classes.tags}>
 					{this.state.tags.map((tag) => {
 						return (
-							<div className={classes.tag_container}>
+							<div key={Math.random()} className={classes.tag_container}>
 								<TagElement tag={tag} />
 							</div>
 						);
